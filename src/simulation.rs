@@ -1,7 +1,6 @@
 use crate::config::Config;
 use crate::entities::Entities;
 use crate::prng::Xoshiro256;
-use std::cmp::Ordering;
 
 pub struct Simulation {
     config: Config,
@@ -10,6 +9,16 @@ pub struct Simulation {
     previous_active_count: usize,
     stagnation_counter: u32,
     prng: Xoshiro256,
+    // Temporary storage for sorted data (for collision detection)
+    sorted_indices: Vec<usize>,
+    sorted_x: Vec<i32>,
+    sorted_y: Vec<i32>,
+    sorted_hue: Vec<f32>,
+    sorted_sat: Vec<f32>,
+    sorted_light: Vec<f32>,
+    sorted_birth: Vec<u32>,
+    sorted_pos_x: Vec<f32>,
+    sorted_pos_y: Vec<f32>,
 }
 
 impl Simulation {
@@ -22,6 +31,15 @@ impl Simulation {
             previous_active_count: 0,
             stagnation_counter: 0,
             prng: Xoshiro256::new(config.seed),
+            sorted_indices: Vec::new(),
+            sorted_x: Vec::new(),
+            sorted_y: Vec::new(),
+            sorted_hue: Vec::new(),
+            sorted_sat: Vec::new(),
+            sorted_light: Vec::new(),
+            sorted_birth: Vec::new(),
+            sorted_pos_x: Vec::new(),
+            sorted_pos_y: Vec::new(),
         };
         sim.initialize_population();
         sim
@@ -167,7 +185,7 @@ impl Simulation {
         let current_tick = self.current_tick;
 
         let mut i = 0;
-        while i < self.sorted_indices.len() - 1 {
+        while i < self.sorted_indices.len().saturating_sub(1) {
             let curr_idx = self.sorted_indices[i];
             let next_idx = self.sorted_indices[i + 1];
 
@@ -289,17 +307,6 @@ impl Simulation {
     pub fn get_current_tick(&self) -> u32 {
         self.current_tick
     }
-
-    // Temporary storage for sorted data (for collision detection)
-    sorted_indices: Vec<usize> = Vec::new(),
-    sorted_x: Vec<i32> = Vec::new(),
-    sorted_y: Vec<i32> = Vec::new(),
-    sorted_hue: Vec<f32> = Vec::new(),
-    sorted_sat: Vec<f32> = Vec::new(),
-    sorted_light: Vec<f32> = Vec::new(),
-    sorted_birth: Vec<u32> = Vec::new(),
-    sorted_pos_x: Vec<f32> = Vec::new(),
-    sorted_pos_y: Vec<f32> = Vec::new(),
 }
 
 impl Clone for Config {
