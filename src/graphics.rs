@@ -1,16 +1,13 @@
 use wgpu::*;
-use std::mem;
 
 pub struct RenderPipeline {
     pub pipeline: wgpu::RenderPipeline,
     pub bind_group: BindGroup,
-    pub vertex_buffer: Buffer,
 }
 
 impl RenderPipeline {
     pub fn new(
         device: &Device,
-        queue: &Queue,
         surface_format: TextureFormat,
         texture: &Texture,
     ) -> Self {
@@ -118,18 +115,9 @@ impl RenderPipeline {
             multiview: None,
         });
 
-        // Create full-screen quad vertex buffer (not used, but kept for structure)
-        let vertex_buffer = device.create_buffer(&BufferDescriptor {
-            label: Some("quad_vertex_buffer"),
-            size: 24,
-            usage: BufferUsages::VERTEX,
-            mapped_at_creation: true,
-        });
-
         Self {
             pipeline,
             bind_group,
-            vertex_buffer,
         }
     }
 }

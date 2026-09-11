@@ -3,19 +3,24 @@ use crate::entities::Entities;
 pub struct Renderer {
     framebuffer: Vec<u32>,
     grid_size: usize,
+    pixel_scale: usize, // Each agent rendered as pixel_scale x pixel_scale pixels
 }
 
 impl Renderer {
     pub fn new(grid_size: usize) -> Self {
+        let pixel_scale = 10; // 100x100 grid * 10 = 1000x1000 display
         Self {
-            framebuffer: vec![0; grid_size * grid_size],
+            framebuffer: vec![0; grid_size * pixel_scale * grid_size * pixel_scale],
             grid_size,
+            pixel_scale,
         }
     }
 
     pub fn render(&mut self, entities: &Entities, alpha: f32, _tick: u32) {
         // Clear framebuffer
         self.framebuffer.fill(0);
+
+        let display_size = self.grid_size * self.pixel_scale;
 
         // Render each active agent
         for i in 0..entities.is_alive.len() {
@@ -42,10 +47,21 @@ impl Renderer {
                 entities.lightness[i],
             );
 
-            // Plot pixel
-            let idx = py * self.grid_size + px;
-            if idx < self.framebuffer.len() {
-                self.framebuffer[idx] = rgb;
+            // Draw scaled pixel (10x10)
+            let start_x = px * self.pixel_scale;
+            let start_y = py * self.pixel_scale;
+
+            for dy in 0..self.pixel_scale {
+                for dx in 0..self.pixel_scale {
+                    let x = start_x + dx;
+                    let y = start_y + dy;
+                    if x < display_size && y < display_size {
+                        let idx = y * display_size + x;
+                        if idx < self.framebuffer.len() {
+                            self.framebuffer[idx] = rgb;
+                        }
+                    }
+                }
             }
         }
     }

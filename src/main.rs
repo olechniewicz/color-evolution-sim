@@ -129,12 +129,12 @@ fn main() {
     let _result = pollster::block_on(async {
         let mut graphics = GraphicsState::new(&window).await;
 
-        // Create texture for simulation framebuffer
+        // Create texture for simulation framebuffer (1000x1000)
         let texture = graphics.device.create_texture(&TextureDescriptor {
             label: Some("sim_framebuffer"),
             size: Extent3d {
-                width: config_clone.grid_size as u32,
-                height: config_clone.grid_size as u32,
+                width: 1000,
+                height: 1000,
                 depth_or_array_layers: 1,
             },
             mip_level_count: 1,
@@ -146,11 +146,11 @@ fn main() {
         });
 
         // Create render pipeline
-        let render_pipeline = RenderPipeline::new(&graphics.device, &graphics.queue, graphics.config.format, &texture);
+        let render_pipeline = RenderPipeline::new(&graphics.device, graphics.config.format, &texture);
         graphics.render_pipeline = Some(render_pipeline);
         graphics.texture = Some(texture);
 
-        event_loop.run(move |event, target| {
+        let _ = event_loop.run(move |event, target| {
             match event {
                 Event::WindowEvent {
                     event: WindowEvent::CloseRequested,
@@ -163,7 +163,7 @@ fn main() {
                 Event::AboutToWait => {
                     let now = Instant::now();
 
-                    // Logic tick (every 500ms)
+                    // Logic tick
                     if now.duration_since(last_tick_time) >= tick_interval {
                         simulation.tick();
                         last_tick_time = now;
@@ -208,12 +208,12 @@ fn main() {
                                 &rgba_data,
                                 ImageDataLayout {
                                     offset: 0,
-                                    bytes_per_row: Some(config_clone.grid_size as u32 * 4),
-                                    rows_per_image: Some(config_clone.grid_size as u32),
+                                    bytes_per_row: Some(1000 * 4),
+                                    rows_per_image: Some(1000),
                                 },
                                 Extent3d {
-                                    width: config_clone.grid_size as u32,
-                                    height: config_clone.grid_size as u32,
+                                    width: 1000,
+                                    height: 1000,
                                     depth_or_array_layers: 1,
                                 },
                             );
