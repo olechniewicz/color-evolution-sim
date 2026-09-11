@@ -186,8 +186,8 @@ impl Simulation {
 
         let mut i = 0;
         while i < self.sorted_indices.len().saturating_sub(1) {
-            let curr_idx = self.sorted_indices[i];
-            let next_idx = self.sorted_indices[i + 1];
+            let _curr_idx = self.sorted_indices[i];
+            let _next_idx = self.sorted_indices[i + 1];
 
             let curr_grid = self.sorted_y[i] * (grid_size as i32) + self.sorted_x[i];
             let next_grid = self.sorted_y[i + 1] * (grid_size as i32) + self.sorted_x[i + 1];

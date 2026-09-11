@@ -13,7 +13,7 @@ impl Renderer {
         }
     }
 
-    pub fn render(&mut self, entities: &Entities, alpha: f32, tick: u32) {
+    pub fn render(&mut self, entities: &Entities, alpha: f32, _tick: u32) {
         // Clear framebuffer
         self.framebuffer.fill(0);
 
